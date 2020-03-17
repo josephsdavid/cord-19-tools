@@ -33,15 +33,17 @@ data = cotools.Paperset("data/comm_use_subset")
 
 # indexes with ints
 pprint(data[0])
+# returns a dict
 
 # and slices!
 pprint(data[:2])
+# returns a list of dicts
 
 
 print(len(data))
 
 # takes about 5gb in memory
-alldata = [x[0] for x in data]
+alldata = data[:]
 ```
 
 Lets talk for a bit about how it works, and why it doesnt take a gigantic amount of memory. The files are not actually loaded into python ***until the data is indexed***. Upon indexing, the files at those indexes are read into python, resulting in a list of dictionaries. This means you can still contribute while working on a low resource system.

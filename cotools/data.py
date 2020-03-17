@@ -30,7 +30,11 @@ class Paperset:
         slicedkeys = list(self.dir_dict.keys())[indices]
         if not isinstance(slicedkeys, list):
             slicedkeys=[slicedkeys]
-        return [self._load_file(self.dir_dict[key]) for key in slicedkeys]
+        out =  [self._load_file(self.dir_dict[key]) for key in slicedkeys]
+        if len(out) == 1:
+            return out[0]
+        else:
+            return out
 
 
     def __len__(self) -> int:
