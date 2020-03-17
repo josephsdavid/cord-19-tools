@@ -45,3 +45,9 @@ alldata = [x[0] for x in data]
 ```
 
 Lets talk for a bit about how it works, and why it doesnt take a gigantic amount of memory. The files are not actually loaded into python ***until the data is indexed***. Upon indexing, the files at those indexes are read into python, resulting in a list of dictionaries. This means you can still contribute while working on a low resource system.
+
+
+# TODO
+
+- [ ] Metadata
+- [ ] Other data, for example data from [this aggregate site](https://www.kiragoldner.com/covid19/) and [this google spreadsheet](https://docs.google.com/spreadsheets/u/1/d/e/2PACX-1vRwAqp96T9sYYq2-i7Tj0pvTf6XVHjDSMIKBdZHXiCGGdNC0ypEU9NbngS8mxea55JuCFuua1MUeOj5/pubhtml#)
