@@ -49,6 +49,14 @@ alldata = data[:]
 Lets talk for a bit about how it works, and why it doesnt take a gigantic amount of memory. The files are not actually loaded into python ***until the data is indexed***. Upon indexing, the files at those indexes are read into python, resulting in a list of dictionaries. This means you can still contribute while working on a low resource system.
 
 
+## Hopkins data
+
+The Hopkins data can be loaded with `load_hopkins`. It loads three dicts, each containing data from the hopkins dataset:
+
+```{python}
+confirmed, deaths, recoverise = cotools.load_hopkins()
+```
+
 # TODO
 
 - [ ] Metadata
