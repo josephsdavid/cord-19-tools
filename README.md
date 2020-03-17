@@ -2,6 +2,12 @@
 
 Tools for making COVID 19 data slightly easier for everyone!
 
+## Installation
+
+```
+pip install cord-19-tools
+```
+
 ## The Paperset class
 
 This is a class for lazily loading papers from the [CORD-19 dataset](https://pages.semanticscholar.org/coronavirus-research). Here are the instructions for use:
