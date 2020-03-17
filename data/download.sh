@@ -10,13 +10,9 @@ wget $noncomm -O noncomm_use_subset.tar.gz
 wget $pmc -O pmc_custom_license.tar.gz
 wget $rxiv -O biorxiv_medrxiv.tar.gz
 
-mkdir comm_use_subset
-tar -xvzf comm_use_subset.tar.gz  -C comm_use_subset
-mkdir noncomm_use_subset
-tar -xvzf noncomm_use_subset.tar.gz  -C noncomm_use_subset
-mkdir pmc_custom_license
-tar -xvzf pmc_custom_license.tar.gz  -C pmc_custom_license
-mkdir biorxiv_medrxiv
-tar -xvzf biorxiv_medrxiv.tar.gz  -C biorxiv_medrxiv
+tar -xvzf comm_use_subset.tar.gz
+tar -xvzf noncomm_use_subset.tar.gz
+tar -xvzf pmc_custom_license.tar.gz
+tar -xvzf biorxiv_medrxiv.tar.gz
 
 rm ./*.tar.gz

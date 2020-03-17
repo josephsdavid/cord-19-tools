@@ -11,9 +11,7 @@ This is a class for lazily loading papers from the [CORD-19 dataset](https://pag
 2. Extract it into a directory of your choice (functionality for leaving the tarballs unpacked/online may be added later, this is version 0.0.1), for example:
 
 ```sh
-mkdir data
-mkdir data/comm_use_subset
-tar -xvzf comm_use_subset.tar.gz -C data/comm_use_subset
+tar -xvzf comm_use_subset.tar.gz 
 ```
 
 3. Load it into python!
