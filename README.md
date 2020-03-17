@@ -34,6 +34,12 @@ pprint(data[0])
 
 # and slices!
 pprint(data[:2])
+
+
+print(len(data))
+
+# takes about 5gb in memory
+alldata = [x[0] for x in data]
 ```
 
 Lets talk for a bit about how it works, and why it doesnt take a gigantic amount of memory. The files are not actually loaded into python ***until the data is indexed***. Upon indexing, the files at those indexes are read into python, resulting in a list of dictionaries.
