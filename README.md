@@ -6,10 +6,13 @@ Tools for making COVID 19 data slightly easier for everyone!
 
 This is a class for lazily loading papers from the [CORD-19 dataset](https://pages.semanticscholar.org/coronavirus-research). Here are the instructions for use:
 
-1. Download a dataset in tar.gz form from the **Download Here** section
+1. Download a dataset in tar.gz form from the **Download Here** section, or using [download bash script](data/download.sh) in this repository (which automatically completes step 2 for you)
 
 2. Extract it into a directory of your choice (functionality for leaving the tarballs unpacked/online may be added later, this is version 0.0.1), for example:
+
 ```sh
+mkdir data
+mkdir data/comm_use_subset
 tar -xvzf comm_use_subset.tar.gz -C data/comm_use_subset
 ```
 
