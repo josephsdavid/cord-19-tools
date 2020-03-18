@@ -20,12 +20,10 @@ class Paperset:
         self.directory = directory
         self.dir_dict = {idx: f for idx, f in enumerate(os.listdir(self.directory))}
 
-
     def _load_file(self, path: str) -> dict:
         with open(f"{self.directory}/{path}") as handle:
             outdict = json.loads(handle.read())
         return outdict
-
 
     def __getitem__(self, indices: int) -> list:
         slicedkeys = list(self.dir_dict.keys())[indices]
@@ -50,6 +48,10 @@ class Paperset:
         return len(self.dir_dict.keys())
 
 
+def search(ps: Paperset, txt:list) -> list:
+    if type(txt) is not list:
+        txt = [txt]
+    return [x for x in ps if any(c in _get_text(x).lower() for c in txt) or any (c in _get_abstract(x).lower() for c in txt)]
 
 
 def download(dir: str='.') -> None:

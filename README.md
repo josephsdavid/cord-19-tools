@@ -8,6 +8,10 @@ Tools for making COVID 19 data slightly easier for everyone! If you A) think som
 pip install cord-19-tools
 ```
 
+# Demo
+
+[Demonstration Notebook](Cotools_demo.ipynb)
+
 ## Downloading the data
 
 To download and extract the data, use the `download` function:
