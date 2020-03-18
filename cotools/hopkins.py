@@ -22,7 +22,7 @@ def _convert_data(data: dict) -> dict:
         elif k in ['Lat', 'Long']:
             out[k] = list(map(float, data[k]))
         else:
-            out[k] = list(map(float, data[k]))
+            out[k] = list(map(int, data[k]))
     return out
 
 def get_hopkins() -> (dict, dict, dict):

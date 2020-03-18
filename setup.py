@@ -6,7 +6,7 @@ def readme():
 
 setuptools.setup(
     name = "cord-19-tools",
-    version = "0.0.6",
+    version = "0.0.7",
     description = "CORD 19 tools and utilities",
     long_description = readme(),
     long_description_content_type = "text/markdown",

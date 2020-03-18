@@ -2,7 +2,8 @@ import json
 import os
 from urllib.request import urlopen
 import tarfile
-
+from typing import Callable
+from .text import _get_text, _get_abstract
 
 class Paperset:
     def __init__(self, directory: str) -> None:
@@ -36,6 +37,14 @@ class Paperset:
         else:
             return out
 
+    def apply(self, fn: Callable) -> list:
+        return [fn(self._load_file(self.dir_dict[k])) for k in self.dir_dict.keys()]
+
+    def texts(self) -> list:
+        return self.apply(_get_text)
+
+    def abstracts(self) -> list:
+        return self.apply(_get_abstract)
 
     def __len__(self) -> int:
         return len(self.dir_dict.keys())
