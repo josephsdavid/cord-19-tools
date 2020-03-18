@@ -10,7 +10,7 @@ pip install cord-19-tools
 
 # Demo
 
-[Demonstration Notebook](Cotools_demo.ipynb)
+[Demonstration Notebook on colab](https://colab.research.google.com/drive/1al-K7vT3m72EOBduMpN2rQF1bLdGikx_)
 
 ## Downloading the data
 
