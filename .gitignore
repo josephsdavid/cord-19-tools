@@ -4,10 +4,6 @@
 *.json
 #result
 #data/
-# for davids health
-*.nix
-nix/
-.envrc
 
 
 # tensorboard logs
