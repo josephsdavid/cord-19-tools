@@ -3,7 +3,7 @@ from urllib.request import urlopen
 import requests
 import io
 
-def _read_data(url):
+def _read_data(url: str) -> dict:
     response = urlopen(url)
     byts = response.read()
     data = io.StringIO(byts.decode())
