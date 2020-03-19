@@ -1,6 +1,5 @@
 import csv
 from urllib.request import urlopen
-import requests
 import io
 
 def _read_data(url: str) -> dict:
