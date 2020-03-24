@@ -90,7 +90,7 @@ print(set(sum(keys, [])))
 The Hopkins data can be loaded with `load_hopkins`. It loads three dicts, each containing data from the hopkins dataset:
 
 ```{python}
-confirmed, deaths, recoverise = cotools.load_hopkins()
+confirmed, deaths = cotools.load_hopkins()
 ```
 
 # TODO

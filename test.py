@@ -1,7 +1,8 @@
 import cotools
 from pprint import pprint
 
-cotools.download(dir="data")
+
+#cotools.download(dir="data")
 
 noncomm = cotools.Paperset("data/noncomm_use_subset")
 

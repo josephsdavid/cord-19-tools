@@ -2,8 +2,9 @@ import json
 import os
 from urllib.request import urlopen
 import tarfile
-from typing import Callable
+from typing import Callable, List, Union
 from .text import _get_text, _get_abstract
+
 
 class Paperset:
     def __init__(self, directory: str) -> None:
@@ -25,7 +26,7 @@ class Paperset:
             outdict = json.loads(handle.read())
         return outdict
 
-    def __getitem__(self, indices: int) -> list:
+    def __getitem__(self, indices: Union[int, slice]) -> Union[list, dict]:
         slicedkeys = list(self.dir_dict.keys())[indices]
         if not isinstance(slicedkeys, list):
             slicedkeys=[slicedkeys]
@@ -38,17 +39,17 @@ class Paperset:
     def apply(self, fn: Callable) -> list:
         return [fn(self._load_file(self.dir_dict[k])) for k in self.dir_dict.keys()]
 
-    def texts(self) -> list:
+    def texts(self) -> List[str]:
         return self.apply(_get_text)
 
-    def abstracts(self) -> list:
+    def abstracts(self) -> List[str]:
         return self.apply(_get_abstract)
 
     def __len__(self) -> int:
         return len(self.dir_dict.keys())
 
 
-def search(ps: Paperset, txt:list) -> list:
+def search(ps: Paperset, txt: Union[str, List[str]]) -> List[dict]:
     if type(txt) is not list:
         txt = [txt]
     return [x for x in ps if any(c in _get_text(x).lower() for c in txt) or any (c in _get_abstract(x).lower() for c in txt)]
