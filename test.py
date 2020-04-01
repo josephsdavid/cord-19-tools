@@ -2,7 +2,7 @@ import cotools
 from pprint import pprint
 
 
-#cotools.download(dir="data")
+cotools.download(dir="data")
 
 noncomm = cotools.Paperset("data/noncomm_use_subset")
 
@@ -15,7 +15,6 @@ cotools.text(data[0])
 
 cotools.texts(data[:15])
 
-data.text()
 
 data.apply(len)
 

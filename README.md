@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/cord-19-tools.svg)](https://badge.fury.io/py/cord-19-tools)
 # COVID-19 Data Tools
 
 Tools for making COVID 19 data slightly easier for everyone! If you A) think something would be useful in your research or B) have some helpful code to contribute, make an issue or PR ASAP so we can get your code shared!
