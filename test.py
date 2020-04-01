@@ -1,15 +1,14 @@
-import cotools
 from pprint import pprint
 
+import cotools
 
-cotools.download(dir="data")
-import pdb; pdb.set_trace()  # XXX BREAKPOINT
+# cotools.download(dir="data")
 
-noncomm = cotools.Paperset("data/noncomm_use_subset")
+# noncomm = cotools.Paperset("data/noncomm_use_subset")
 
-data = cotools.Paperset("data/comm_use_subset")
-pprint(data[0])
-print(type(data[0]))
+data = cotools.Paperset("data/custom_license")
+# pprint(data[0])
+# print(type(data[0]))
 
 # get the text for one feature
 cotools.text(data[0])
@@ -17,20 +16,25 @@ cotools.text(data[0])
 cotools.texts(data[:15])
 
 
-data.apply(len)
+# data.apply(len)
 
 # dict
 
-pprint(data[:2])
+# pprint(data[:2])
 print(type(data[2:5]))
 # list
 
 print(len(data))
 
 # takes about 5gb in memory
-alldata = data[:]
+# alldata = data[:]
 
-len(data)
+# len(data)
 
-len(alldata)
+# len(alldata)
 
+txt = [["covid", "novel coronavirus"], ["ventilator", "cpap", "bipap"]]
+
+x = cotools.search(data, txt)
+print(len(x))
+print(len(cotools.search(data, txt[0])))

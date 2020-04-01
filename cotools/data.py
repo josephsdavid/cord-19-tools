@@ -1,15 +1,24 @@
 import json
-import shutil
 import os
-import xmltodict as xml
-import requests
-from urllib.request import urlopen
+import shutil
 import tarfile
-from typing import Callable, List, Union
-from .text import _get_text, _get_abstract
+from collections import Iterator
+from functools import reduce
+from itertools import chain
+from typing import Any, Callable, Dict, List, Union
+from urllib.request import urlopen
+
+import requests
+import xmltodict as xml
+
+from .text import _get_abstract, _get_text
+
+searchtext = Union[str, List[str]]
+searchtexts = Union[searchtext, List[searchtext]]
+textlist = List[Dict[str, Any]]
 
 
-class Paperset:
+class Paperset(Iterator):
     def __init__(self, directory: str) -> None:
         """
         The Paperset class:
@@ -23,6 +32,7 @@ class Paperset:
         """
         self.directory = directory
         self.dir_dict = {idx: f for idx, f in enumerate(os.listdir(self.directory))}
+        self.keys = list(self.dir_dict.keys())
 
     def _load_file(self, path: str) -> dict:
         with open(f"{self.directory}/{path}") as handle:
@@ -39,7 +49,11 @@ class Paperset:
         else:
             return out
 
-    def apply(self, fn: Callable) -> list:
+    def __next__(self) -> Dict[Any, Any]:
+        key = self.keys.pop()
+        return self._load_file(self.dir_dict[key])
+
+    def apply(self, fn: Callable[..., Any]) -> List[Any]:
         return [fn(self._load_file(self.dir_dict[k])) for k in self.dir_dict.keys()]
 
     def texts(self) -> List[str]:
@@ -52,15 +66,30 @@ class Paperset:
         return len(self.dir_dict.keys())
 
 
-def search(ps: Paperset, txt: Union[str, List[str]]) -> List[dict]:
-    if type(txt) is not list:
+def _search(ps: Union[Paperset, textlist], txt: Any) -> textlist:
+    if type(txt[0]) is list:
+        raise ValueError("Items of the search cannot be nested lists!")
+    if type(txt) is str:
         txt = [txt]
+    txt = [x.lower() for x in txt]
     return [
         x
         for x in ps
         if any(c in _get_text(x).lower() for c in txt)
         or any(c in _get_abstract(x).lower() for c in txt)
     ]
+
+
+def search(
+    ps: Union[Paperset, textlist],
+    terms: Union[searchtexts, searchtext, List[List[str]]],
+) -> textlist:
+    if type(terms) is not list:
+        raise ValueError("search terms must be a list!!")
+    if len(terms) != 1:
+        return reduce(lambda x, y: _search(x, y), terms, ps)
+    else:
+        return _search(ps, terms)
 
 
 def download(dir: str = ".") -> None:
@@ -82,7 +111,7 @@ def download(dir: str = ".") -> None:
     for d in data.keys():
         print(f"downloading {data[d]}")
         handle = urlopen(data[d])
-        if d.replace(".tar.gz","") in os.listdir(f"{dir}"):
+        if d.replace(".tar.gz", "") in os.listdir(f"{dir}"):
             shutil.rmtree(f"{dir}/{d.replace('.tar.gz','')}", ignore_errors=True)
         with open(f"{dir}/{d}", "wb") as out:
             while True:

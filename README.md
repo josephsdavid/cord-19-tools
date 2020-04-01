@@ -32,7 +32,6 @@ This is a class for lazily loading papers from the [CORD-19 dataset](https://pag
 
 
 ```python
-
 # no `/` at the end please!
 data = cotools.Paperset("data/comm_use_subset")
 
