@@ -3,6 +3,7 @@ from pprint import pprint
 
 
 cotools.download(dir="data")
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 noncomm = cotools.Paperset("data/noncomm_use_subset")
 

@@ -6,7 +6,7 @@ def readme():
 
 setuptools.setup(
     name = "cord-19-tools",
-    version = "0.1.2",
+    version = "0.1.5",
     description = "CORD 19 tools and utilities",
     long_description = readme(),
     long_description_content_type = "text/markdown",
@@ -23,4 +23,7 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
+    install_requires = [
+        "xmltodict"
+    ]
 )
