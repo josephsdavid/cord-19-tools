@@ -85,12 +85,17 @@ keys = comm_use.apply(lambda x: list(x.keys()))
 print(set(sum(keys, [])))
 ```
 
-## Hopkins data
+### Searching
 
-The Hopkins data can be loaded with `load_hopkins`. It loads three dicts, each containing data from the hopkins dataset:
+You can search with a list OR a nested list! See the demo notebook for more examples!
 
-```{python}
-confirmed, deaths = cotools.load_hopkins()
+```python
+txt = [["covid", "novel coronavirus"], ["ventilator", "cpap", "bipap"]]
+
+x = cotools.search(comm_use, txt)
+print(len(x))
+print(len(cotools.search(comm_use, txt[0])))
+print(len(cotools.search(comm_use, txt[-1])))
 ```
 
 # TODO

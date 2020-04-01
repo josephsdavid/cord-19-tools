@@ -15,7 +15,7 @@ from .text import _get_abstract, _get_text
 searchtext = Union[str, List[str]]
 searchtexts = Union[searchtext, List[searchtext]]
 textlist = List[Dict[str, Any]]
-nestedlist = List[List[str]
+nestedlist = List[List[str]]
 
 class Paperset:
     def __init__(self, directory: str) -> None:
@@ -76,17 +76,14 @@ def _search(ps: Union[Paperset, textlist], txt: Any) -> textlist:
 
 def search(
     ps: Union[Paperset, textlist],
-    terms: Union[searchtexts, searchtext, nestedlist]],
+    terms: Union[searchtexts, searchtext, nestedlist],
 ) -> textlist:
     if type(terms) is not list:
         raise ValueError("search terms must be a list!!")
     types = [type(x) for x in terms]
     nests = len(list(filter(lambda x: x is list, types)))
     if nests != 0:
-        out = ps
-        for t in terms:
-            out = _search(out, t)
-            return out
+        return reduce(lambda x,y: _search(x,y), terms, ps)
     else:
         return _search(ps, terms)
 
