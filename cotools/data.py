@@ -2,10 +2,9 @@ import json
 import os
 import shutil
 import tarfile
-from collections import Iterator
 from functools import reduce
 from itertools import chain
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Sequence, TypeVar, Union, overload
 from urllib.request import urlopen
 
 import requests
@@ -18,7 +17,7 @@ searchtexts = Union[searchtext, List[searchtext]]
 textlist = List[Dict[str, Any]]
 
 
-class Paperset(Iterator):
+class Paperset:
     def __init__(self, directory: str) -> None:
         """
         The Paperset class:
@@ -48,10 +47,6 @@ class Paperset(Iterator):
             return out[0]
         else:
             return out
-
-    def __next__(self) -> Dict[Any, Any]:
-        key = self.keys.pop()
-        return self._load_file(self.dir_dict[key])
 
     def apply(self, fn: Callable[..., Any]) -> List[Any]:
         return [fn(self._load_file(self.dir_dict[k])) for k in self.dir_dict.keys()]
@@ -86,8 +81,19 @@ def search(
 ) -> textlist:
     if type(terms) is not list:
         raise ValueError("search terms must be a list!!")
-    if len(terms) != 1:
-        return reduce(lambda x, y: _search(x, y), terms, ps)
+    types = [type(x) for x in terms]
+    nests = len(list(filter(lambda x: x is list, types)))
+    import pdb
+
+    pdb.set_trace()  # XXX BREAKPOINT
+    if nests != 0:
+        out = ps
+        for t in terms:
+            out = _search(out, t)
+            import pdb
+
+            pdb.set_trace()  # XXX BREAKPOINT
+            return out
     else:
         return _search(ps, terms)
 

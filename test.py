@@ -35,6 +35,6 @@ print(len(data))
 
 txt = [["covid", "novel coronavirus"], ["ventilator", "cpap", "bipap"]]
 
-x = cotools.search(data, txt)
-print(len(x))
-print(len(cotools.search(data, txt[0])))
+# x = cotools.search(data, txt)
+# print(len(x))
+print(len(cotools.search(data, txt[-1])))
