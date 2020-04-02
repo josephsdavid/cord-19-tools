@@ -16,7 +16,11 @@ cotools.text(data[0])
 cotools.texts(data[:15])
 
 
-# data.apply(len)
+import pdb
+
+pdb.set_trace()  # XXX BREAKPOINT
+data.apply(len)
+
 
 # dict
 
@@ -28,6 +32,8 @@ print(len(data))
 
 # takes about 5gb in memory
 # alldata = data[:]
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
+#data[:]
 
 # len(data)
 
@@ -35,6 +41,9 @@ print(len(data))
 
 txt = [["novel coronavirus"], ["ventilator", "cpap", "bipap"]]
 
+import pdb
+
+pdb.set_trace()  # XXX BREAKPOINT
 x = cotools.search(data, txt)
 print(len(x))
 print(len(cotools.search(data, txt[0])))
