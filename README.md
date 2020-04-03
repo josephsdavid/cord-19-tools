@@ -9,6 +9,8 @@ Tools for making COVID 19 data slightly easier for everyone! If you A) think som
 pip install cord-19-tools
 ```
 
+BE SURE TO HAVE THE MOST RECENT VERSION! I will be constantly updating to make sure users are getting the right data! Semantic Scholar updates the dataset every friday, so on fridays and saturdays be sure to redownload data!
+
 # Demo
 
 [Demonstration Notebook on colab](https://colab.research.google.com/drive/1al-K7vT3m72EOBduMpN2rQF1bLdGikx_)
