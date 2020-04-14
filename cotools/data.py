@@ -7,6 +7,7 @@ from typing import Any, Callable, Dict, List, Sequence, TypeVar, Union, overload
 from urllib.request import urlopen
 import requests
 import multiprocessing
+import glob
 
 import xmltodict as xml
 
@@ -32,11 +33,13 @@ class Paperset:
 
     def __init__(self, directory: str) -> None:
         self.directory = directory
-        self.dir_dict = {idx: f for idx, f in enumerate(os.listdir(self.directory))}
+        # get all of the text files recursively
+        file_paths = glob.glob(self.directory + "/**/*.json",recursive=True)
+        self.dir_dict = {idx:file_path for idx,file_path in enumerate(file_paths)}
         self.keys = list(self.dir_dict.keys())
 
     def _load_file(self, path: str) -> dict:
-        with open(f"{self.directory}/{path}") as handle:
+        with open(f"{path}") as handle:
             outdict = json.loads(handle.read())
         return outdict
 
