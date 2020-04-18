@@ -23,7 +23,7 @@ To download and extract the data, use the `download` function:
 import cotools
 from pprint import pprint
 
-cotools.download(dir="data")
+cotools.download(dir="data", match = "2020-04-10", regex = True)
 ```
 
 For now this just downloads the data from the [CORD-19 dataset](https://pages.semanticscholar.org/coronavirus-research), metadata is not included (will be by end of day), extracts all the tarfiles, and places them in a directory

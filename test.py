@@ -2,11 +2,18 @@ from pprint import pprint
 
 import cotools
 
-# cotools.download(dir="data")
+help(cotools.download)
+
+cotools.download(dir="data", match = "2020-04-10", regex = True)
+
 
 # noncomm = cotools.Paperset("data/noncomm_use_subset")
 
-data = cotools.Paperset("data/custom_license")
+data = cotools.Paperset("data/noncomm_use_subset")
+
+text(data[-1])
+
+
 # pprint(data[0])
 # print(type(data[0]))
 

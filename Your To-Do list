@@ -1,0 +1,16 @@
+Help on function download in module cotools.data:
+
+ddoowwnnllooaadd(dir: str = '.', match: str = '.tar.gz', regex: bool = False) -> None
+    download:
+        Download CORD-19 dataset from ai2's S3 bucket.
+    -----------------------------------------------------
+    args:
+        dir:    Directory to download the data into.
+        match:  A string dictating which files to download. Defaults to match
+                all tar files.
+        regex:  If regex should be used. Otherwise, a `match in x` is used.
+    -----------------------------------------------------
+    how it works:
+        Match all files:                `download('data', match='*')`
+        Match only JSON files:          `download('data', match='.json')`
+        Match tar files from April 10:  `download('data', match='2020-04-10.*.tar.gz', regex=True)`
