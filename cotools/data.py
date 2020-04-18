@@ -10,6 +10,7 @@ import multiprocessing
 import glob
 
 import xmltodict as xml
+import re
 
 from .text import _get_abstract, _get_text
 
@@ -160,37 +161,56 @@ def search(
         return _search(ps, terms)
 
 
-def download(dir: str = ".") -> None:
+
+def download(dir: str = ".", match: str = '.tar.gz', regex: bool = False) -> None:
+    """
+    download:
+        Download CORD-19 dataset from ai2's S3 bucket.
+    -----------------------------------------------------
+    args:
+        dir:    Directory to download the data into.
+        match:  A string dictating which files to download. Defaults to match
+                all tar files.
+        regex:  If regex should be used. Otherwise, a `match in x` is used.
+    -----------------------------------------------------
+    how it works:
+        Match all files:                `download('data', match='*')`
+        Match only JSON files:          `download('data', match='.json')`
+        Match tar files from April 10:  `download('data', match='2020-04-10.*.tar.gz', regex=True)`
+    """
+
+    s3bucket_url = "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/"
     site = xml.parse(
-        requests.get(
-            "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/"
-        ).content
-    )["ListBucketResult"]["Contents"][::-1][:10]
-    key = [x["Key"] for x in site]
-    urls = [
-        f"https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/{k}"
-        for k in key
-    ]
-    keys = [k.split("/")[-1] for k in key]
-    data = dict(zip(keys, urls))
+        requests.get(s3bucket_url).content
+    )["ListBucketResult"]["Contents"]
+
+    def file_filter(f: str) -> bool:
+      if regex:
+        return re.search(match, f)
+      return not match or (match in f) or (match == '*')
+    
+    keys = filter(file_filter, (x["Key"] for x in site))
+    data = dict((
+        (os.path.basename(k), os.path.join(s3bucket_url, k))
+        for k in keys
+    ))
+    assert data, 'No files matched.'
 
     if not os.path.exists(dir):
         os.mkdir(dir)
-    for d in data.keys():
-        print(f"downloading {data[d]}")
-        handle = urlopen(data[d])
-        if d.replace(".tar.gz", "") in os.listdir(f"{dir}"):
-            shutil.rmtree(f"{dir}/{d.replace('.tar.gz','')}", ignore_errors=True)
-        with open(f"{dir}/{d}", "wb") as out:
-            while True:
-                dat = handle.read(1024)
-                if len(dat) == 0:
-                    break
-                out.write(dat)
-    for f in os.listdir(dir):
-        if tarfile.is_tarfile(f"{dir}/{f}"):
-            print(f"Extracting {dir}/{f}")
-            tar = tarfile.open(f"{dir}/{f}", "r:gz")
-            tar.extractall(path=dir)
-            tar.close()
-            os.remove(f"{dir}/{f}")
+
+    for fp, url in data.items():
+      res = requests.get(url, stream=True)
+      if res.status_code != 200:
+        print(f"Failed to download {url}: Got status {res.status_code}")
+        continue
+
+      print(f'Processing {url} ... ', end="")
+      if fp.endswith('.tar.gz'):
+        shutil.rmtree(os.path.join(dir, fp.replace('.tar.gz', '')), ignore_errors=True)
+        tar = tarfile.open(fileobj=res.raw, mode="r|gz")
+        tar.extractall(dir)
+      else:
+        with open(os.path.join(dir, fp), "wb") as f:
+          f.write(res.content)
+      print('Done.')
