@@ -1,11 +1,17 @@
 from pprint import pprint
+import os
 
 import cotools
 
 help(cotools.download)
 
-cotools.download(dir="data", match = "2020-04-10", regex = True)
+from datetime import datetime
+from datetime import timedelta
 
+
+cotools.download(dir="data")
+
+import pdb; pdb.set_trace()  # XXX BREAKPOINT
 
 # noncomm = cotools.Paperset("data/noncomm_use_subset")
 

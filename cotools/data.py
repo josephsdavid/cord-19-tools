@@ -1,5 +1,7 @@
 import json
 import os
+from datetime import datetime
+from datetime import timedelta
 import shutil
 import tarfile
 from functools import reduce, partial
@@ -35,8 +37,8 @@ class Paperset:
     def __init__(self, directory: str) -> None:
         self.directory = directory
         # get all of the text files recursively
-        file_paths = glob.glob(self.directory + "/**/*.json",recursive=True)
-        self.dir_dict = {idx:file_path for idx,file_path in enumerate(file_paths)}
+        file_paths = glob.glob(self.directory + "/**/*.json", recursive=True)
+        self.dir_dict = {idx: file_path for idx, file_path in enumerate(file_paths)}
         self.keys = list(self.dir_dict.keys())
 
     def _load_file(self, path: str) -> dict:
@@ -161,8 +163,9 @@ def search(
         return _search(ps, terms)
 
 
-
-def download(dir: str = ".", match: str = '.tar.gz', regex: bool = False) -> None:
+def download(
+    dir: str = ".", match: str = ".tar.gz", regex: bool = False, metadata: bool = True
+) -> None:
     """
     download:
         Download CORD-19 dataset from ai2's S3 bucket.
@@ -172,6 +175,7 @@ def download(dir: str = ".", match: str = '.tar.gz', regex: bool = False) -> Non
         match:  A string dictating which files to download. Defaults to match
                 all tar files.
         regex:  If regex should be used. Otherwise, a `match in x` is used.
+        metadata: Should metadata be downloaded. Defaults to True
     -----------------------------------------------------
     how it works:
         Match all files:                `download('data', match='*')`
@@ -180,37 +184,63 @@ def download(dir: str = ".", match: str = '.tar.gz', regex: bool = False) -> Non
     """
 
     s3bucket_url = "https://ai2-semanticscholar-cord-19.s3-us-west-2.amazonaws.com/"
-    site = xml.parse(
-        requests.get(s3bucket_url).content
-    )["ListBucketResult"]["Contents"]
+    site = xml.parse(requests.get(s3bucket_url).content)["ListBucketResult"]["Contents"]
 
     def file_filter(f: str) -> bool:
-      if regex:
-        return re.search(match, f)
-      return not match or (match in f) or (match == '*')
-    
-    keys = filter(file_filter, (x["Key"] for x in site))
-    data = dict((
-        (os.path.basename(k), os.path.join(s3bucket_url, k))
-        for k in keys
-    ))
-    assert data, 'No files matched.'
+        if regex:
+            return re.search(match, f)
+        return not match or (match in f) or (match == "*")
+
+    keys = list(filter(file_filter, (x["Key"] for x in site)))
+    if metadata:
+        md = list(filter(re.compile("metadata").search, [x["Key"] for x in site]))
+        dates = [datetime.strptime(x.split("/")[0], "%Y-%m-%d") for x in md]
+        latest_metadata = md[dates.index(max(dates))]
+        keys += [latest_metadata]
+        mag_md = list(
+            filter(
+                re.compile("metadata_with_mag_mapping").search, [x["Key"] for x in site]
+            )
+        )
+        dates = [datetime.strptime(x.split("/")[0], "%Y-%m-%d") for x in mag_md]
+        latest_metadata_mappings = mag_md[dates.index(max(dates))]
+        keys += [latest_metadata_mappings]
+    data = dict(((os.path.basename(k), os.path.join(s3bucket_url, k)) for k in keys))
+    assert data, "No files matched."
 
     if not os.path.exists(dir):
         os.mkdir(dir)
 
     for fp, url in data.items():
-      res = requests.get(url, stream=True)
-      if res.status_code != 200:
-        print(f"Failed to download {url}: Got status {res.status_code}")
-        continue
+        res = requests.get(url, stream=True)
+        if res.status_code != 200:
+            print(f"Failed to download {url}: Got status {res.status_code}")
+            continue
 
-      print(f'Processing {url} ... ', end="")
-      if fp.endswith('.tar.gz'):
-        shutil.rmtree(os.path.join(dir, fp.replace('.tar.gz', '')), ignore_errors=True)
-        tar = tarfile.open(fileobj=res.raw, mode="r|gz")
-        tar.extractall(dir)
-      else:
-        with open(os.path.join(dir, fp), "wb") as f:
-          f.write(res.content)
-      print('Done.')
+        print(f"Processing {url} ... ", end="")
+        if fp.endswith(".tar.gz"):
+            shutil.rmtree(
+                os.path.join(dir, fp.replace(".tar.gz", "")), ignore_errors=True
+            )
+            tar = tarfile.open(fileobj=res.raw, mode="r|gz")
+            tar.extractall(dir)
+        else:
+            with open(os.path.join(dir, fp), "wb") as f:
+                f.write(res.content)
+        print("Done.")
+
+
+def last_friday() -> str:
+    target_dayofweek = 4  # Friday
+    current_dayofweek = datetime.now().weekday()  # Today
+    if target_dayofweek <= current_dayofweek:
+        # target is in the current week
+        endDate = datetime.now() - timedelta(current_dayofweek - target_dayofweek)
+    else:
+        # target is in the previous week
+        endDate = (
+            datetime.now()
+            - timedelta(weeks=1)
+            + timedelta(target_dayofweek - current_dayofweek)
+        )
+    return str(endDate).split()[0]
