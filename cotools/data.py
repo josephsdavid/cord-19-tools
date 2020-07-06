@@ -1,5 +1,6 @@
 import json
 import os
+import traceback
 from datetime import datetime
 from datetime import timedelta
 import shutil
@@ -207,27 +208,46 @@ def download(
         keys += [latest_metadata_mappings]
     data = dict(((os.path.basename(k), os.path.join(s3bucket_url, k)) for k in keys))
     assert data, "No files matched."
-
     if not os.path.exists(dir):
         os.mkdir(dir)
-
+    
     for fp, url in data.items():
-        res = requests.get(url, stream=True)
-        if res.status_code != 200:
-            print(f"Failed to download {url}: Got status {res.status_code}")
-            continue
+        try:
+            res = requests.get(url, stream=True)
+            
+            if res.status_code != 200:
+                print(f"Failed to download {url}: Got status {res.status_code}")
+                continue
+            
+            print(f"Processing {url} ... ", end="")
+            if fp.endswith(".tar.gz"):
+                shutil.rmtree(
+                    os.path.join(dir, fp.replace(".tar.gz", "")), ignore_errors=True
+                )
+                try:
+                    tar = tarfile.open(fileobj=res.raw, mode="r|gz")
+                    tar.extractall(dir)
+                except Exception as e:
+                    if type(e) == tarfile.ReadError:
+                        # quick fix for arxiv.org package
+                        # background: https://arxiv.org/help/faq/browsergunzip + https://github.com/psf/requests/issues/4346
+                        res.close()
+                        import urllib.request
+                        urllib.request.urlretrieve(url, os.path.join(dir, fp))
+                        shutil.unpack_archive(os.path.join(dir, fp), os.path.join(dir, fp.replace(".tar.gz", "")),"tar")
+                        os.remove(os.path.join(dir, fp))
+                    else:
+                        raise       
+            else:
+                with open(os.path.join(dir, fp), "wb") as f:
+                    f.write(res.content)
+            print("Done.")
+        except Exception as e:
+            print(f"Failed:", e)
+            traceback.print_tb(e.__traceback__)
 
-        print(f"Processing {url} ... ", end="")
-        if fp.endswith(".tar.gz"):
-            shutil.rmtree(
-                os.path.join(dir, fp.replace(".tar.gz", "")), ignore_errors=True
-            )
-            tar = tarfile.open(fileobj=res.raw, mode="r|gz")
-            tar.extractall(dir)
-        else:
-            with open(os.path.join(dir, fp), "wb") as f:
-                f.write(res.content)
-        print("Done.")
+            
+            
 
 
 def last_friday() -> str:
